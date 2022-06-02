@@ -6,3 +6,67 @@ INSERT INTO animals(name,date_of_birth,escape_attempts,neutered,weight_kg) VALUE
 ('Pikachu', '2021-01-07', 1, false, 15.04),
 ('Devimon', '2017-05-12',  5, true, 11 );
 
+/*Inserting new data to table*/
+
+INSERT INTO animals(name,date_of_birth,escape_attempts,neutered,weight_kg) VALUES 
+('Charmander', '2020-02-08', 0, false, -11),
+('Plantmon', '2022-11-15', 2, true, -5.7 ),
+('Squirtle', '1993-04-02', 3, false, -12.13),
+('Angemon', '2005-06-12', 1, true, -45),
+('Boarmon', '2005-06-07', 7, true, 20.4),
+('Blossom', '1998-10-13', 3, true, 17),
+('Ditto', '1998-05-14', 4, true, 22);
+
+/* Setting the species to unspecified*/
+BEGIN; -- start transaction
+
+UPDATE animals SET species = 'unspecified';
+
+--verify the changes were made
+SELECT * FROM animals;
+--rollback changes made to species
+ROLLBACK;
+
+--verify that thet changes were rolledback
+SELECT * FROM animals;
+
+/* Adding the correct species */
+BEGIN;
+
+UPDATE animals SET species = 'digimon' WHERE name LIKE '%mon';
+
+UPDATE animals SET species = 'pokemon' WHERE species IS NULL;
+
+
+COMMIT; /*save the changes*/
+
+--Verify that change was made and persists after commit.
+SELECT * FROM animals;
+
+/* Deleting all animals */
+BEGIN;
+
+DELETE FROM animals;
+
+-- Verify that the animnals table is empty
+SELECT * FROM animals;
+
+ROLLBACK;
+
+--verify that thet changes were rolledback
+SELECT * FROM animals;
+
+-- savepoint
+BEGIN;
+
+DELETE FROM animals WHERE date_of_birth > '2022-01-01';
+
+SAVEPOINT save_point;
+
+UPDATE animals SET weight_kg = weight_kg * -1;
+
+ROLLBACK TO save_point;
+
+UPDATE animals SET weight_kg = weight_kg * -1 WHERE weight_kg < 0;
+
+COMMIT;
